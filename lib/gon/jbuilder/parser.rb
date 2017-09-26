@@ -75,15 +75,16 @@ class Gon
       def parse_partial(partial_line)
         path = partial_line.match(/['"]([^'"]*)['"]/)[1]
         path = parse_path path
-        options_hash = partial_line.match(/,(.*)/)[1]
+        options_match_data = partial_line.match(/,(.*)/)
 
-        set_options_from_hash(options_hash) if options_hash.present?
+        set_options_from_hash(options_match_data[1]) if options_match_data.present?
 
         find_partials File.readlines(path)
       end
 
       def set_options_from_hash(options_hash)
         options = eval "{#{options_hash}}"
+        options = options[:locals] if options[:locals]
         options.each do |name, val|
           self.instance_variable_set("@#{name.to_s}", val)
           eval "def #{name}; self.instance_variable_get('@' + '#{name.to_s}'); end"
@@ -95,7 +96,7 @@ class Gon
         if (splitted = path.split('/')).blank?
             raise 'Something wrong with partial path in your jbuilder templates'
         elsif splitted.size == 1
-            splitted.shift(@_controller_name)
+            splitted.insert(0, @_controller_name)
         end
         construct_path(splitted)
       end

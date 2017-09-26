@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 6.1.1
+
+  * Find JSON partial from current controller's views directory by default
+  * Accept JSON partial with no options
+
 ## 6.0.1
 
   * Free dependencies
